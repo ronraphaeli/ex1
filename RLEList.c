@@ -1,11 +1,11 @@
 #include "RLEList.h"
 #include <stdlib.h>
 
-typedef struct  RLEList_t {
+
+struct  RLEList_t {
     char data;
     struct RLEList_t * next;
     int multiplier;
-    //TODO: implement
 };
 
 void RLEListDestroy(RLEList list) {

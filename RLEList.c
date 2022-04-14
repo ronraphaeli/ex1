@@ -5,7 +5,7 @@
 typedef struct  RLEListItem_t {
     char data;
     struct RLEListItem_t* next;
-    int multiplier;
+    int counter;
 } *RLEListItem;
 
 struct  RLEList_t {
@@ -21,7 +21,7 @@ void RLEListDestroy(RLEList list) {
     free(list);
     while (item) {
         RLEListItem toDelete = item;
-        printf("%d\n", toDelete->multiplier);
+        printf("%d\n", toDelete->counter);
         item = item->next;
         free(toDelete);
     }
@@ -41,7 +41,7 @@ RLEListResult RLEListAppend(RLEList list, char value) {
         return RLE_LIST_NULL_ARGUMENT;
     }
     if ((list->last) && (list->last->data == value)) {
-        list->last->multiplier++;
+        list->last->counter++;
         list->size++;
         return  RLE_LIST_SUCCESS;
     }
@@ -51,7 +51,7 @@ RLEListResult RLEListAppend(RLEList list, char value) {
     }
     newItem->next = NULL;
     newItem->data = value;
-    newItem->multiplier = 1;
+    newItem->counter = 1;
     if (list->last == NULL) {
         list->head = newItem;
     }

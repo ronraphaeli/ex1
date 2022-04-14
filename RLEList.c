@@ -2,18 +2,26 @@
 #include <stdlib.h>
 #define HEAD 0
 
-struct  RLEList_t {
+typedef struct  RLEListItem_t {
     char data;
-    struct RLEList_t * next;
-    struct RLEList_t * last;
+    struct RLEListItem_t* next;
     int multiplier;
+} *RLEListItem;
+
+struct  RLEList_t {
+     RLEListItem  head;
+    RLEListItem  last;
+    int size;
 };
 
 void RLEListDestroy(RLEList list) {
-    while (list) {
-        RLEList toDelete = list;
-        //printf("%d\n", toDelete->multiplier);
-        list = list->next;
+    if (list == NULL)
+       return;
+    RLEListItem item  = list->head;
+    while (item) {
+        RLEListItem toDelete = item;
+        printf("%d\n", toDelete->multiplier);
+        item = item->next;
         free(toDelete);
     }
 };
@@ -21,26 +29,31 @@ void RLEListDestroy(RLEList list) {
 RLEList RLEListCreate() {
     RLEList list = malloc(sizeof(*list));
     if (!list) return NULL;
-    list->data = HEAD;
-    list->next = NULL;
-    list->last = list;
+    list->head = NULL;
+    list->last = NULL;
+    list->size = 0;
     return list;
 }
 
 RLEListResult RLEListAppend(RLEList list, char value) {
-    if (!list || !list->last)
-        return RLE_LIST_NULL_ARGUMENT;
-    if (list->last->data == value) {
+    if (!list ) return RLE_LIST_NULL_ARGUMENT;
+    RLEListItem newItem;
+    if ((list->last) && (list->last->data == value)) {
         list->last->multiplier++;
-        return RLE_LIST_SUCCESS;
+        list->size++;
+        return  RLE_LIST_SUCCESS;
     }
-    RLEList newLink = malloc(sizeof(*list));
-    if (!newLink) return RLE_LIST_OUT_OF_MEMORY;
-    newLink->next = NULL;
-    newLink->data = value;
-    newLink->multiplier = 1;
-    list->last->next = newLink;
-    list->last = newLink;
+    newItem = malloc(sizeof(*list));
+    if (!newItem) return RLE_LIST_OUT_OF_MEMORY;
+    newItem->next = NULL;
+    newItem->data = value;
+    newItem->multiplier = 1;
+    if (list->last == NULL) 
+        list->head = newItem;
+    else 
+        list->last->next = newItem;
+    list->last = newItem;
+    list->size++;
     return  RLE_LIST_SUCCESS;
 }
 

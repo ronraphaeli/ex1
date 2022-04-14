@@ -18,6 +18,7 @@ void RLEListDestroy(RLEList list) {
     if (list == NULL)
        return;
     RLEListItem item  = list->head;
+    free(list);
     while (item) {
         RLEListItem toDelete = item;
         printf("%d\n", toDelete->multiplier);
@@ -27,7 +28,7 @@ void RLEListDestroy(RLEList list) {
 };
 
 RLEList RLEListCreate() {
-    RLEList list = malloc(sizeof(*list));
+    RLEList list = (RLEList)malloc(sizeof(*list));
     if (!list) return NULL;
     list->head = NULL;
     list->last = NULL;
@@ -36,22 +37,27 @@ RLEList RLEListCreate() {
 }
 
 RLEListResult RLEListAppend(RLEList list, char value) {
-    if (!list ) return RLE_LIST_NULL_ARGUMENT;
-    RLEListItem newItem;
+    if (!list) {
+        return RLE_LIST_NULL_ARGUMENT;
+    }
     if ((list->last) && (list->last->data == value)) {
         list->last->multiplier++;
         list->size++;
         return  RLE_LIST_SUCCESS;
     }
-    newItem = malloc(sizeof(*list));
-    if (!newItem) return RLE_LIST_OUT_OF_MEMORY;
+    RLEListItem newItem = (RLEListItem)malloc(sizeof(*newItem));
+    if (!newItem) {
+        return RLE_LIST_OUT_OF_MEMORY;
+    }
     newItem->next = NULL;
     newItem->data = value;
     newItem->multiplier = 1;
-    if (list->last == NULL) 
+    if (list->last == NULL) {
         list->head = newItem;
-    else 
+    }
+    else {
         list->last->next = newItem;
+    }
     list->last = newItem;
     list->size++;
     return  RLE_LIST_SUCCESS;
@@ -64,6 +70,15 @@ int main() {
     RLEListAppend(list, 'r');
     RLEListAppend(list, 'r');
     RLEListAppend(list, 'r');
+    RLEListAppend(list, 'r');
+    RLEListAppend(list, 'b');
+    RLEListAppend(list, 'b');
+    RLEListAppend(list, 'b');
+    RLEListAppend(list, 'b');
+    RLEListAppend(list, 'b');
+    RLEListAppend(list, 'b');
+
+
     RLEListDestroy(list);
 }
 //implement the functions here
